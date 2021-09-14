@@ -20,6 +20,30 @@ public class AdministratorController {
         this.administratorService = administratorService;
     }
 
+    @PostMapping(value = "acceptReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> acceptReport(@RequestBody ReportAnswerDTO reportAnswerDTO) {
+        administratorService.acceptReport(reportAnswerDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping(value = "rejectReport", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> rejectReport(@RequestBody ReportAnswerDTO reportAnswerDTO) {
+        administratorService.rejectReport(reportAnswerDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(value = "reports")
+    public ResponseEntity<List<ReportedPostDTO>> getReportedPosts() {
+        List<ReportedPostDTO> reportedPostDTOS = administratorService.getReportedPosts();
+        return new ResponseEntity<>(reportedPostDTOS, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "reportPost")
+    public ResponseEntity<ReportedPost> reportPost(@RequestBody ReportPostDTO reportPostDTO) {
+        ReportedPost reportedPost = administratorService.reportPost(reportPostDTO);
+        return new ResponseEntity<>(reportedPost, HttpStatus.OK);
+    }
+
     @GetMapping(value = "notAcceptedAgents")
     public ResponseEntity<List<UserInfoDTO>> getNotAcceptedAgents() {
         List<UserInfoDTO> userInfoDTOList = administratorService.getNotAcceptedAgents();
