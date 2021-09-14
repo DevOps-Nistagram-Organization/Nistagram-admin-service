@@ -25,6 +25,39 @@ public class AdministratorService {
         this.userClient = userClient;
     }
 
+    public void acceptReport(ReportAnswerDTO reportAnswerDTO) {
+        String token = userService.getTokenString();
+        postClient.deletePost(reportAnswerDTO.getPostId(), token);
+        reportedPostRepository.deleteAllByPostId(reportAnswerDTO.getPostId());
+    }
+
+    public void rejectReport(ReportAnswerDTO reportAnswerDTO) {
+        reportedPostRepository.deleteAllByPostId(reportAnswerDTO.getPostId());
+    }
+
+    public ArrayList<ReportedPostDTO> getReportedPosts() {
+        List<ReportedPost> reportedPostList = reportedPostRepository.findAll();
+        Map<Long, Long> postReportMap = new HashMap<>();
+        for (ReportedPost reportedPost : reportedPostList) {
+            Long key = reportedPost.getPostId();
+            if (postReportMap.containsKey(key)) {
+                Long currentValue = postReportMap.get(key);
+                postReportMap.put(key, currentValue + 1);
+            } else {
+                postReportMap.put(key, 1L);
+            }
+        }
+        ArrayList<ReportedPostDTO> reportPostDTOS = new ArrayList<>();
+        postReportMap.forEach((key, value) -> reportPostDTOS.add(new ReportedPostDTO(key, value)));
+        return reportPostDTOS;
+    }
+
+    public ReportedPost reportPost(ReportPostDTO reportPostDTO) {
+        String username = userService.getUsername();
+        ReportedPost reportedPost = new ReportedPost(null,reportPostDTO.getPostId(),username,new Date());
+        return reportedPostRepository.save(reportedPost);
+    }
+
     public List<UserInfoDTO> getNotAcceptedAgents() {
         String token = userService.getTokenString();
         ResponseEntity<List<UserInfoDTO>> userInfoDTOS = userClient.getNotApprovedAgents(token);
