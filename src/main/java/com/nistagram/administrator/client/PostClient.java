@@ -5,8 +5,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(url = "${api.postService}", name = "PostService")
+// app.post.url from application.properties
+@FeignClient(name = "post", url = "${app.post.url}")
 public interface PostClient {
-    @DeleteMapping(value = "delete/{id}")
+    @DeleteMapping(value = "post/delete/{id}")
     ResponseEntity<Boolean> deletePost(@PathVariable("id") Long id, @RequestHeader("Authorization") String bearerToken);
 }
